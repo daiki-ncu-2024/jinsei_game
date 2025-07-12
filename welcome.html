@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生ゲーム - ようこそ</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .welcome-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .rules-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .rules-section h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .rules-list {
+            list-style: none;
+            padding: 0;
+        }
+        .rules-list li {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .phases-section {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .phases-section h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .phases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .phase-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+        .previous-result {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #ff6b6b;
+        }
+        .previous-result h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        .previous-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .previous-stat {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .start-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 20px 40px;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .start-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .difficulty-section {
+            margin: 30px 0;
+        }
+        .difficulty-section h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .difficulty-form {
+            text-align: center;
+        }
+        .difficulty-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .difficulty-option {
+            cursor: pointer;
+            flex: 1;
+            min-width: 200px;
+            max-width: 220px;
+        }
+        .difficulty-option input[type="radio"] {
+            display: none;
+        }
+        .difficulty-card {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .difficulty-card:hover {
+            border-color: #4facfe;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .difficulty-option input[type="radio"]:checked + .difficulty-card {
+            border-color: #4facfe;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .difficulty-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .difficulty-target {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .difficulty-desc {
+            font-size: 12px;
+            color: #999;
+        }
+        .difficulty-card.easy {
+            border-color: #4CAF50;
+        }
+        .difficulty-option input[type="radio"]:checked + .difficulty-card.easy {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+        }
+        .difficulty-card.standard {
+            border-color: #2196F3;
+        }
+        .difficulty-option input[type="radio"]:checked + .difficulty-card.standard {
+            border-color: #2196F3;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        }
+        .difficulty-card.hard {
+            border-color: #f44336;
+        }
+        .difficulty-option input[type="radio"]:checked + .difficulty-card.hard {
+            border-color: #f44336;
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <h1 class="title">🎮 人生ゲーム</h1>
+        <p class="subtitle">あなたの人生を選択で切り開いていこう！</p>
+
+        <div class="rules-section">
+            <h3>📋 ゲームルール</h3>
+            <ul class="rules-list">
+                <li><strong>📊 ステータス管理：</strong>幸福度とお金の2つのステータスを管理します</li>
+                <li><strong>💰 コストシステム：</strong>選択肢にはコストがかかり、お金が足りないと選べません</li>
+                <li><strong>🎲 ランダムイベント：</strong>30%の確率で突発的なイベントが発生します</li>
+                <li><strong>🎯 目標設定：</strong>ランダムに設定された幸福度目標の達成を目指しましょう</li>
+                <li><strong>🏆 複数エンディング：</strong>最終的な幸福度によって異なる結末があります</li>
+            </ul>
+        </div>
+
+        <div class="phases-section">
+            <h3>🗓️ 人生の6つのフェーズ</h3>
+            <div class="phases-grid">
+                <div class="phase-item">1. 幼少期</div>
+                <div class="phase-item">2. 思春期</div>
+                <div class="phase-item">3. 高校時代</div>
+                <div class="phase-item">4. 大学時代</div>
+                <div class="phase-item">5. 社会人デビュー</div>
+                <div class="phase-item">6. キャリア形成期</div>
+            </div>
+        </div>
+
+        {% if previous_result %}
+        <div class="previous-result">
+            <h3>📈 前回のプレイ結果</h3>
+            <p><strong>難易度：</strong>{{ previous_result.difficulty }}</p>
+            <p><strong>エンディング：</strong>{{ previous_result.ending_title }}</p>
+            <div class="previous-stats">
+                <div class="previous-stat">
+                    <div>幸福度</div>
+                    <div><strong>{{ previous_result.happiness }}</strong></div>
+                </div>
+                <div class="previous-stat">
+                    <div>お金</div>
+                    <div><strong>{{ previous_result.money }}万円</strong></div>
+                </div>
+            </div>
+            {% if previous_result.target_achieved %}
+                <p style="color: #4CAF50; font-weight: bold; margin-top: 10px;">🎉 前回は目標を達成しました！</p>
+            {% else %}
+                <p style="color: #ff6b6b; font-weight: bold; margin-top: 10px;">😔 前回は目標に届きませんでした</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="difficulty-section">
+            <h3>🎯 難易度を選択してください</h3>
+            <form action="/start_game" method="POST" class="difficulty-form">
+                <div class="difficulty-options">
+                    <label class="difficulty-option">
+                        <input type="radio" name="difficulty" value="easy" checked>
+                        <div class="difficulty-card easy">
+                            <div class="difficulty-title">🌟 イージーモード</div>
+                            <div class="difficulty-target">目標幸福度: 90</div>
+                            <div class="difficulty-desc">初心者におすすめ</div>
+                        </div>
+                    </label>
+                    <label class="difficulty-option">
+                        <input type="radio" name="difficulty" value="standard">
+                        <div class="difficulty-card standard">
+                            <div class="difficulty-title">⚡ スタンダードモード</div>
+                            <div class="difficulty-target">目標幸福度: 120</div>
+                            <div class="difficulty-desc">バランスの取れた難易度</div>
+                        </div>
+                    </label>
+                    <label class="difficulty-option">
+                        <input type="radio" name="difficulty" value="hard">
+                        <div class="difficulty-card hard">
+                            <div class="difficulty-title">🔥 ハードモード</div>
+                            <div class="difficulty-target">目標幸福度: 150</div>
+                            <div class="difficulty-desc">上級者向けの挑戦</div>
+                        </div>
+                    </label>
+                </div>
+                <button type="submit" class="start-button">🚀 ゲームを開始する</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

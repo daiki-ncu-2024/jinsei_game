@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生ゲーム - {{ phase_name }}</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .status-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .status-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .phase-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .phase-description {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .choices-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .choice-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        .choice-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .choice-button:active {
+            transform: translateY(0);
+        }
+        .choice-button.disabled {
+            background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .choice-button.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        .choice-number {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .choice-cost {
+            font-size: 14px;
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 15px;
+            margin-left: 10px;
+        }
+        .insufficient-funds {
+            display: block;
+            font-size: 12px;
+            color: #ffcccc;
+            margin-top: 5px;
+        }
+        .choice-result {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #4ecdc4;
+            animation: fadeInBounce 0.6s ease-out;
+        }
+        .choice-result h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        .choice-result h4 {
+            margin: 0 0 10px 0;
+            color: #555;
+            font-size: 16px;
+        }
+        .choice-result .effects {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .random-event {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #ff6b6b;
+            animation: fadeInBounce 0.6s ease-out;
+        }
+        .random-event h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        .random-event h4 {
+            margin: 0 0 10px 0;
+            color: #555;
+            font-size: 16px;
+        }
+        .random-event p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .random-event .effects {
+            font-weight: bold;
+        }
+        .target-display {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border-left: 5px solid #ff6b6b;
+        }
+        .target-display h2 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 20px;
+        }
+        .progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 25px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            height: 100%;
+            border-radius: 25px;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            margin: 10px 0 0 0;
+            color: #666;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        @keyframes fadeInBounce {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.9);
+            }
+            50% {
+                transform: translateY(5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-label">幸福度</div>
+                <div class="status-value">{{ player_status.happiness }}</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">お金</div>
+                <div class="status-value">{{ player_status.money }}万円</div>
+            </div>
+        </div>
+        
+        <div class="target-display">
+            <h2>🎯 目標：幸福度{{ happiness_target }}を目指そう！</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ (player_status.happiness / happiness_target * 100) | round }}%"></div>
+            </div>
+            <p class="progress-text">現在の進捗：{{ player_status.happiness }} / {{ happiness_target }} ({{ ((player_status.happiness / happiness_target * 100) | round) }}%)</p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 25px; padding: 10px 20px; display: inline-block; border-left: 5px solid #ff6b6b;">
+                <span style="font-size: 16px; font-weight: bold; color: #333;">フェーズ {{ current_phase_number }}/6</span>
+            </div>
+        </div>
+        <h1 class="phase-title">{{ phase_name }}</h1>
+        <p class="phase-description">{{ phase_data.description }}</p>
+
+        {% if choice_effects %}
+        <div class="choice-result">
+            <h3>📋 前回の選択結果</h3>
+            <h4>選択：{{ choice_effects.choice_text }}</h4>
+            {% if choice_effects.cost > 0 %}
+            <p class="effects">コスト：{{ choice_effects.cost }}万円</p>
+            {% endif %}
+            <p class="effects">効果：{{ format_effects(choice_effects.effects) }}</p>
+        </div>
+        {% endif %}
+
+        {% if random_event %}
+        <div class="random-event">
+            <h3>🎲 突発イベント発生！</h3>
+            <h4>{{ random_event.name }}</h4>
+            <p>{{ random_event.description }}</p>
+            <p class="effects">効果：{{ format_effects(random_event.effects) }}</p>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/choose" class="choices-form">
+            {% for i in range(phase_data.choices|length) %}
+                {% set choice = phase_data.choices[i] %}
+                {% set cost = choice.get('cost', 0) %}
+                {% set can_afford = player_status.money >= cost %}
+                <button type="submit" name="choice" value="{{ i + 1 }}" 
+                        class="choice-button{% if not can_afford %} disabled{% endif %}"
+                        {% if not can_afford %}disabled{% endif %}>
+                    <span class="choice-number">{{ i + 1 }}.</span>
+                    {{ choice.text }}
+                    {% if cost > 0 %}
+                        <span class="choice-cost">(コスト: {{ cost }}万円)</span>
+                    {% endif %}
+                    {% if not can_afford %}
+                        <span class="insufficient-funds">💰 お金が足りません</span>
+                    {% endif %}
+                </button>
+            {% endfor %}
+        </form>
+    </div>
+</body>
+</html>
